@@ -7,9 +7,11 @@ def add(list, alphabet, size):
             for a in alphabet:
                 newlist.append(elmt+a)
         return add(newlist, alphabet, size)
-    else:
-        return list
+    return list
     
-alphabet=["a", "b", "c", "d", "e", "f"]
-array=add([], alphabet, 6)
-print(array)
+alphabet=["a", "b", "5", "d", "e", "f", "g", "h"]
+array=add([], alphabet, 8)
+f=open("listpass.txt", "w")
+for elmt in array:
+    f.write(elmt+" ")
+f.close()
