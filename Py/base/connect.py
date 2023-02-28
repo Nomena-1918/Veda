@@ -19,7 +19,7 @@ class Connect:
             cur.close()
             conn.close()
     
-    def insert(self, query):
+    def update(self, query):
         conn= psycopg2.connect(f"dbname={self.dbname} user={self.username} password={self.password}")
         cur=conn.cursor()
         try:
