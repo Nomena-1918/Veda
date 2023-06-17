@@ -1,13 +1,10 @@
 package veda;
 
-import org.checkerframework.checker.units.qual.Acceleration;
-
 import veda.chrono.DateGen;
 import veda.reflect.annotation.IsRelation;
 
 @IsRelation(table="504")
 @Deprecated
-@Acceleration
 public class User {
     String nom;
     int age;
