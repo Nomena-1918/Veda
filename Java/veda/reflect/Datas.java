@@ -44,6 +44,8 @@ public class Datas {
     public static String revertType(String type){
         if(type.equals("int")){
             return "Integer";
+        }else if(type.equals("char")){
+            return "Character";
         }
         return StringHelper.majStart(type);
     }

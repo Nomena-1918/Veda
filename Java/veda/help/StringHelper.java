@@ -11,12 +11,6 @@ public class StringHelper {
         String first=String.valueOf(s.charAt(0));
         return s.replaceFirst(first, first.toUpperCase());
     }
-    public static String quote(String value, String type){
-        if(type.equals("String")||type.equals("DateGen")){
-            return "'"+value+"'";
-        }
-        return value;
-    }
     public static String[] stringify(Vector<Object> list){
         String[] strings=new String[list.size()];
         for(int i=0; i<strings.length; i++){

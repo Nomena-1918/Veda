@@ -9,19 +9,19 @@ import veda.help.StringHelper;
 @SuppressWarnings("rawtypes")
 public class Reflect {
     private Class c;
+    public Reflect(Class c){
+        setC(c);
+    }
     public Class getC() {
         return c;
     }
     public void setC(Class c) {
         this.c = c;
     }
-    public Reflect(Class c){
-        setC(c);
-    }
-    public String getClassName(Object object){
+    public String getClassName(){
         return getC().getSimpleName();
     }
-    public Field[] getDeclaredFields(Object object){
+    public Field[] getDeclaredFields(){
         return getC().getDeclaredFields();
     }
     public String[] getFieldNames(){
