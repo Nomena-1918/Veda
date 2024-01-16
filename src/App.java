@@ -1,21 +1,21 @@
-import java.sql.Connection;
+import org.junit.Test;
 
 import veda.godao.DAO;
+import veda.godao.Look;
 import veda.godao.annotations.Column;
 import veda.godao.annotations.ForeignKey;
 import veda.godao.annotations.PrimaryKey;
 import veda.godao.annotations.Table;
-import veda.godao.utils.DAOConnexion;
-import veda.godao.utils.QueryUtils;
+import veda.godao.utils.Constantes;
 
 public class App {
     @Table("dept")
     public static class Dept{
         @PrimaryKey
-        @Column("id_dept")
+        @Column("id")
         Integer iddept;
-        @Column("nom_dept")
-        String nom="Finance";
+        @Column("nom")
+        String nom;
         public Integer getIddept() {
             return iddept;
         }
@@ -33,7 +33,7 @@ public class App {
     @Table("emp")
     public static class Emp{
         @PrimaryKey
-        @Column("id_emp")
+        @Column("id")
         Integer id;
         public Integer getId() {
             return id;
@@ -41,11 +41,11 @@ public class App {
         public void setId(Integer id) {
             this.id = id;
         }
-        @Column("nom_emp")
+        @Column("nom")
         String nom;
-        @Column("age_emp")
-        Double age;
-        @ForeignKey
+        // @Column("age")
+        // Double age;
+        @ForeignKey(recursive = false)
         @Column("iddept")
         Dept dept;
         public Dept getDept() {
@@ -60,35 +60,54 @@ public class App {
         public void setNom(String nom) {
             this.nom = nom;
         }
-        public Double getAge() {
-            return age;
-        }
-        public void setAge(Double age) {
-            this.age = age;
-        }
+        // public Double getAge() {
+        //     return age;
+        // }
+        // public void setAge(Double age) {
+        //     this.age = age;
+        // }
         
     }
-    static void addFive(Double d){
-        d=5.;
-    }
     public static void main(String[] args) throws Exception {
-        Connection connect=DAOConnexion.getConnexionPostgreSql("vedatest", "eriq", "root", "localhost");
+        DAO dao=new DAO("poketra", "localhost", "5432", "eriq", "root", false, 2);
+        Look[] objects=dao.select(null, Look.class);
+        for(Look l:objects){
+            System.out.println(l.getNom());
+        }
+    }
+    @Test
+    public void insertEmp() throws Exception{
+        Dept dept=new Dept();
+        dept.setIddept(1);
         Emp e=new Emp();
         e.nom="Ferry";
-        Emp e2=new Emp();
-        e2.id=1;
-        try{
-            DAO.update(connect, e, e2);
-            connect.commit();
-            // Object[] emps=DAO.select(connect, Emp.class);
-            // for(Object emp:emps){
-            //     System.out.println(((Emp)emp).nom+"; Dept: "+((Emp)emp).dept.nom);
-            // }
-        }catch(Exception ex){
-            connect.rollback();
-            throw ex;
-        }finally{
-            connect.close();
+        e.setDept(dept);
+        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        dao.insertWithoutPrimaryKey(null, e);
+    }
+    @Test
+    public void insertDept() throws Exception{
+        Dept dept=new Dept();
+        dept.setNom("Finances");
+        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        dao.insertWithoutPrimaryKey(null, dept);
+    }
+    @Test
+    public void selectEmps() throws Exception{
+        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        Emp[] emps=dao.select(null, Emp.class);
+        for(Emp e:emps){
+            System.out.println(e.getNom()+" "+e.getDept());
         }
+    }
+    @Test
+    public void updateLook() throws Exception{
+        DAO dao=new DAO("poketra", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        Look change=new Look();
+        change.setId(1);
+        change.setNom("debraille");
+        Look where=new Look();
+        where.setId(1);
+        dao.update(null, change, where);
     }
 }
