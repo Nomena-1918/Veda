@@ -363,7 +363,7 @@ public class QueryUtils {
         response[1]=upOffset;
         return response;
     }
-    public static Object mapResultSet(Connection connex, ResultSet result, Object object, HashMap<Field, String> columns) throws Exception{
+    public static Object mapResultSet(Connection connex, ResultSet result, Object object, HashMap<Field, String> columns, DAO dao) throws Exception{
         Object obj=object;
         Class c=object.getClass();
         for(Map.Entry<Field, String> entry:columns.entrySet()){
@@ -372,6 +372,10 @@ public class QueryUtils {
             Class type=f.getType();
             Annotation annote=f.getAnnotation(ForeignKey.class);
             if(annote!=null){
+                boolean recursive=(boolean)annote.annotationType().getMethod("recursive").invoke(annote);
+                if(recursive==false){
+                    continue;
+                }
                 Object foreignValue=type.getConstructor().newInstance();
                 Field primary=getPrimaryField(type);
                 String fieldType=primary.getType().getSimpleName();
@@ -388,7 +392,7 @@ public class QueryUtils {
                 }else if(fieldType.equals("LocalDateTime")){
                     primary.set(foreignValue, result.getTimestamp(entry.getValue()).toLocalDateTime());
                 }
-                Object objet=DAO.select(connex, type, foreignValue)[0];
+                Object objet=dao.select(connex, type, foreignValue)[0];
                 f.set(obj, objet);
                 continue;
             }
