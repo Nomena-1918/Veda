@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Veda">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Veda.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

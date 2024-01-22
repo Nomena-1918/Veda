@@ -148,54 +148,46 @@ public class DAO {
         boolean opened=false;
         Connection connect=connex;
         if(connect==null){
-            switch(getSgbd()){
-                case Constantes.MYSQL_ID:
-                    connect=DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                case Constantes.PSQL_ID:
-                    connect=DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                default:
-                    throw new ConnectionException(Constantes.NOCONNECTION_CODE);
-            }
+            connect = switch (getSgbd()) {
+                case Constantes.MYSQL_ID ->
+                        DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                case Constantes.PSQL_ID ->
+                        DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                default -> throw new ConnectionException(Constantes.NOCONNECTION_CODE);
+            };
             opened=true;
         }
-        PreparedStatement statemnt=connect.prepareStatement(QueryUtils.getSelectQuery(c));
-        HashMap<Field, String> columns=QueryUtils.getColumnsWithField(c);
-        try{
-            LinkedList liste=new LinkedList();
-            ResultSet result=statemnt.executeQuery();
-            while(result.next()){
-                T obj=(T)c.getConstructor().newInstance();
-                obj=(T)QueryUtils.mapResultSet(connect, result, obj, columns, this);
+        try (PreparedStatement statemnt = connect.prepareStatement(QueryUtils.getSelectQuery(c))) {
+            HashMap<Field, String> columns = QueryUtils.getColumnsWithField(c);
+            LinkedList liste = new LinkedList();
+            ResultSet result = statemnt.executeQuery();
+            while (result.next()) {
+                T obj = (T) c.getConstructor().newInstance();
+                obj = (T) QueryUtils.mapResultSet(connect, result, obj, columns, this);
                 liste.add(obj);
             }
-            T[] objets=(T[])Array.newInstance(c, liste.size());
-            for(int i=0;i<objets.length;i++){
-                objets[i]=(T)liste.get(i);
+            T[] objets = (T[]) Array.newInstance(c, liste.size());
+            for (int i = 0; i < objets.length; i++) {
+                objets[i] = (T) liste.get(i);
             }
             return objets;
-        }finally{
-            if(opened){
+        } finally {
+            if (opened) {
                 connect.close();
             }
-            statemnt.close();
         }
     }
     public <T>T[] select(Connection connex, Class<T> c, T where) throws Exception{
         boolean opened=false;
         Connection connect=connex;
         if(connect==null){
-            switch(getSgbd()){
-                case Constantes.MYSQL_ID:
-                    connect=DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                case Constantes.PSQL_ID:
-                    connect=DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                default:
-                    throw new ConnectionException(Constantes.NOCONNECTION_CODE);
-            }
+            connect = switch (getSgbd()) {
+                case Constantes.MYSQL_ID ->
+                        DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                case Constantes.PSQL_ID ->
+                        DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                default -> throw new ConnectionException(Constantes.NOCONNECTION_CODE);
+            };
             opened=true;
         }
         PreparedStatement statemnt=connect.prepareStatement(QueryUtils.getSelectQuery(c, where));
@@ -302,32 +294,27 @@ public class DAO {
         boolean opened=false;
         Connection connect=connex;
         if(connect==null){
-            switch(getSgbd()){
-                case Constantes.MYSQL_ID:
-                    connect=DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                case Constantes.PSQL_ID:
-                    connect=DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
-                    break;
-                default:
-                    throw new ConnectionException(Constantes.NOCONNECTION_CODE);
-            }
+            connect = switch (getSgbd()) {
+                case Constantes.MYSQL_ID ->
+                        DAOConnexion.getConnexionMySql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                case Constantes.PSQL_ID ->
+                        DAOConnexion.getConnexionPostgreSql(getDatabase(), getUser(), getPwd(), getHost(), isUseSSL());
+                default -> throw new ConnectionException(Constantes.NOCONNECTION_CODE);
+            };
             opened=true;
         }
-        PreparedStatement statement=connect.prepareStatement(query);
-        try{
+        try (PreparedStatement statement = connect.prepareStatement(query)) {
             statement.executeUpdate();
-            if(opened){
+            if (opened) {
                 connect.commit();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             connect.rollback();
             throw e;
-        }finally{
-            if(opened){
+        } finally {
+            if (opened) {
                 connect.close();
             }
-            statement.close();
         }
     }
 }
