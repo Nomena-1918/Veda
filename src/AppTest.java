@@ -3,7 +3,6 @@ import models.Emp;
 import org.junit.Test;
 
 import veda.godao.DAO;
-import veda.godao.Look;
 import veda.godao.utils.Constantes;
 
 public class AppTest {
@@ -58,13 +57,10 @@ public class AppTest {
     @Test
     public void updateLook() throws Exception{
         Emp where=new Emp();
-        where.setId(1);
-        where = dao.select(null, Emp.class, where)[0];
+        where.setNom("TEST EMP !!!");
 
         Emp change=new Emp();
-        change.setId(where.getId());
-        change.setNom("TEST EMP !!!");
-        change.setDept(where.getDept());
+        change.setNom("test tsotra");
 
         dao.update(null, change, where);
     }
