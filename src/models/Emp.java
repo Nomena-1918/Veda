@@ -9,30 +9,34 @@ import veda.godao.annotations.Table;
 public class Emp{
     @PrimaryKey
     @Column("id")
-    Integer id;
+    Long id;
     @Column("nom")
     String nom;
     @ForeignKey(recursive = true)
     @Column("iddept")
     Dept dept;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(Integer id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
-    public Dept getDept() {
-        return dept;
-    }
-    public void setDept(Dept dept) {
-        this.dept = dept;
-    }
+
     public String getNom() {
         return nom;
     }
+
     public void setNom(String nom) {
         this.nom = nom;
     }
 
+    public Dept getDept() {
+        return dept;
+    }
+
+    public void setDept(Dept dept) {
+        this.dept = dept;
+    }
 }

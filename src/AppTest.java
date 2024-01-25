@@ -27,7 +27,7 @@ public class AppTest {
     @Test
     public void insertEmp() throws Exception{
         Dept dept=new Dept();
-        dept.setIddept(2);
+        dept.setIddept(2L);
 
         Emp e=new Emp();
         e.setNom("Antema");
@@ -46,7 +46,7 @@ public class AppTest {
     @Test
     public void selectEmpsWhere() throws Exception{
         Emp where = new Emp();
-        where.setId(3);
+        where.setId(3L);
         Emp[] emps=dao.select(null, Emp.class, where);
         for(Emp e:emps){
             System.out.println(e.getNom()+" "+e.getDept().getNom());
