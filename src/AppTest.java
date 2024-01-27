@@ -23,17 +23,26 @@ public class AppTest {
         Dept dept=new Dept();
         dept.setNom("Info");
         dao.insertWithoutPrimaryKey(null, dept);
+        dao.customUpdate(null, "");
     }
     @Test
     public void insertEmp() throws Exception{
         Dept dept=new Dept();
-        dept.setIddept(2L);
+        dept.setId(1L);
 
         Emp e=new Emp();
         e.setNom("Antema");
         e.setDept(dept);
 
         dao.insertWithoutPrimaryKey(null, e);
+    }
+
+    @Test
+    public void selectDept() throws Exception{
+        Dept[] emps=dao.select(null, Dept.class);
+        for(Dept e:emps){
+            System.out.println(e.getId()+" "+e.getNom());
+        }
     }
     @Test
     public void selectEmps() throws Exception{

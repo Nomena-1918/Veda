@@ -8,16 +8,16 @@ import veda.godao.annotations.Table;
 public class Dept {
     @PrimaryKey
     @Column("id")
-    Long iddept;
+    Long id;
     @Column("nom")
     String nom;
 
-    public Long getIddept() {
-        return iddept;
+    public Long getId() {
+        return id;
     }
 
-    public void setIddept(Long iddept) {
-        this.iddept = iddept;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNom() {
