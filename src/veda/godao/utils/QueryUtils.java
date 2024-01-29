@@ -168,101 +168,108 @@ public class QueryUtils {
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
         String[] colonnes=getColumnNamesWithoutPrimary(c);
-        String query="insert into "+table+"(";
+        StringBuilder query= new StringBuilder("insert into " + table + "(");
         for(int i=0;i<colonnes.length;i++){
             if(i==colonnes.length-1){
-                query+=colonnes[i]+")";
+                query.append(colonnes[i]).append(")");
                 break;
             }
-            query+=colonnes[i]+", ";
+            query.append(colonnes[i]).append(", ");
         }
-        query+=" values(";
+        query.append(" values(");
         for(int i=0;i<colonnes.length;i++){
             if(i==colonnes.length-1){
-                query+="?)";
+                query.append("?)");
                 break;
             }
-            query+="?, ";
+            query.append("?, ");
         }
-        return query;
+        System.out.println(query);
+        return query.toString();
     }
     public static String getInsertQueryWithPrimary(Class c) throws Exception{
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
         String[] colonnes=getColumnNames(c);
-        String query="insert into "+table+"(";
+        StringBuilder query= new StringBuilder("insert into " + table + "(");
         for(int i=0;i<colonnes.length;i++){
             if(i==colonnes.length-1){
-                query+=colonnes[i]+")";
+                query.append(colonnes[i]).append(")");
                 break;
             }
-            query+=colonnes[i]+", ";
+            query.append(colonnes[i]).append(", ");
         }
-        query+=" values(";
+        query.append(" values(");
         for(int i=0;i<colonnes.length;i++){
             if(i==colonnes.length-1){
-                query+="?)";
+                query.append("?)");
                 break;
             }
-            query+="?, ";
+            query.append("?, ");
         }
-        return query;
+        System.out.println(query);
+        return query.toString();
     }
     public static String getSelectQuery(Class c) throws Exception{
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
-        String query="select * from "+table;
-        return query;
+        System.out.println("select * from "+table);
+        return "select * from "+table;
     }
     public static String getSelectQuery(Class c, Object where) throws Exception{
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
         String[] columns=getNotNullColumnNames(where);
-        String query="select * from "+table+" where ";
+        StringBuilder query= new StringBuilder("select * from " + table + " where ");
         for(int i=0; i<columns.length; i++){
             if(i==columns.length-1){
-                query+=columns[i]+" = ?";
+                query.append(columns[i]).append(" = ?");
                 break;
             }
-            query+=columns[i]+" = ? and ";
+            query.append(columns[i]).append(" = ? and ");
         }
-        return query;
+        System.out.println(query);
+        return query.toString();
     }
     public static String getUpdateQuery(Class c, Object change, Object where) throws Exception{
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
-        String query="update "+table+" set ";
+        StringBuilder query= new StringBuilder("update " + table + " set ");
         String[] changeColumns=getNotNullColumnNames(change);
         for(int i=0; i<changeColumns.length; i++){
             if(i==changeColumns.length-1){
-                query+=changeColumns[i]+" = ? where ";
+                query.append(changeColumns[i]).append(" = ? where ");
                 break;
             }
-            query+=changeColumns[i]+" = ?, ";
+            query.append(changeColumns[i]).append(" = ?, ");
         }
         String[] whereColumns=getNotNullColumnNames(where);
         for(int i=0; i<whereColumns.length; i++){
             if(i==whereColumns.length-1){
-                query+=whereColumns[i]+" = ?";
+                query.append(whereColumns[i]).append(" = ?");
                 break;
             }
-            query+=whereColumns[i]+" = ? and ";
+            query.append(whereColumns[i]).append(" = ? and ");
         }
-        return query;
+        System.out.println(query);
+        return query.toString();
     }
     public static String getDeleteQuery(Class c, Object where) throws Exception{
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
-        String query="delete from "+table+" where ";
+        StringBuilder query= new StringBuilder("delete from " + table + " where ");
         String[] whereColumns=getNotNullColumnNames(where);
         for(int i=0; i<whereColumns.length; i++){
             if(i==whereColumns.length-1){
-                query+=whereColumns[i]+" = ?";
+                query.append(whereColumns[i]).append(" = ?");
                 break;
             }
-            query+=whereColumns[i]+" = ? and ";
+            query.append(whereColumns[i]).append(" = ? and ");
         }
-        return query;
+
+        System.out.println(query);
+
+        return query.toString();
     }
     public static Field getPrimaryField(Class c){
         Field[] fields=c.getDeclaredFields();
@@ -275,7 +282,6 @@ public class QueryUtils {
         return null;
     }
     public static PreparedStatement mapStatement(PreparedStatement statement, Field[] fields, Object o) throws Exception{
-        PreparedStatement statemnt=statement;
         Class c=o.getClass();
         for(int i=0;i<fields.length;i++){
             Annotation annote=fields[i].getAnnotation(ForeignKey.class);
@@ -283,19 +289,16 @@ public class QueryUtils {
             fields[i].setAccessible(true);
             if(annote!=null){
                 Field primary=getPrimaryField(type);
+                assert primary != null;
                 primary.setAccessible(true);
                 Object foreignId=primary.get(fields[i].get(o));
                 String fieldType=primary.getType().getSimpleName();
-                if(fieldType.equals("Integer")){
-                    statemnt.setInt(i+1, (int)foreignId);
-                }else if(fieldType.equals("String")){
-                    statemnt.setString(i+1, foreignId.toString());
-                }else if(fieldType.equals("Double")){
-                    statemnt.setDouble(i+1, (double)foreignId);
-                }else if(fieldType.equals("LocalDate")){
-                    statemnt.setDate(i+1, Date.valueOf((LocalDate)foreignId));
-                }else if(fieldType.equals("LocalDateTime")){
-                    statemnt.setTimestamp(i+1, Timestamp.valueOf((LocalDateTime)foreignId));
+                switch (fieldType) {
+                    case "Integer" -> statement.setInt(i + 1, (int) foreignId);
+                    case "String" -> statement.setString(i + 1, foreignId.toString());
+                    case "Double" -> statement.setDouble(i + 1, (double) foreignId);
+                    case "LocalDate" -> statement.setDate(i + 1, Date.valueOf((LocalDate) foreignId));
+                    case "LocalDateTime" -> statement.setTimestamp(i + 1, Timestamp.valueOf((LocalDateTime) foreignId));
                 }
                 primary.setAccessible(false);
                 continue;
@@ -303,18 +306,20 @@ public class QueryUtils {
             String fieldType=type.getSimpleName();
             String fieldName=fields[i].getName();
             if(fieldType.equals("Integer")){
-                statemnt.setInt(i+1, (int)c.getMethod("get"+StringUtils.majStart(fieldName)).invoke(o));
+                statement.setInt(i+1, (int)c.getMethod("get"+StringUtils.majStart(fieldName)).invoke(o));
             }else if(fieldType.equals("String")){
-                statemnt.setString(i+1, fields[i].get(o).toString());
+                statement.setString(i+1, fields[i].get(o).toString());
             }else if(fieldType.equals("Double")){
-                statemnt.setDouble(i+1, (double)c.getMethod("get"+StringUtils.majStart(fieldName)).invoke(o));
+                statement.setDouble(i+1, (double)c.getMethod("get"+StringUtils.majStart(fieldName)).invoke(o));
             }else if(fieldType.equals("LocalDate")){
-                statemnt.setDate(i+1, Date.valueOf((LocalDate)fields[i].get(o)));
+                statement.setDate(i+1, Date.valueOf((LocalDate)fields[i].get(o)));
             }else if(fieldType.equals("LocalDateTime")){
-                statemnt.setTimestamp(i+1, Timestamp.valueOf((LocalDateTime)fields[i].get(o)));
+                statement.setTimestamp(i+1, Timestamp.valueOf((LocalDateTime)fields[i].get(o)));
             }
         }
-        return statemnt;
+
+
+        return statement;
     }
     public static Object[] mapStatement(PreparedStatement statement, Field[] fields, Object o, int offset) throws Exception{
         Object[] response=new Object[2];
@@ -330,16 +335,12 @@ public class QueryUtils {
                 primary.setAccessible(true);
                 Object foreignId=primary.get(fields[i-offset].get(o));
                 String fieldType=primary.getType().getSimpleName();
-                if(fieldType.equals("Integer")){
-                    statemnt.setInt(i+1, (int)foreignId);
-                }else if(fieldType.equals("String")){
-                    statemnt.setString(i+1, foreignId.toString());
-                }else if(fieldType.equals("Double")){
-                    statemnt.setDouble(i+1, (double)foreignId);
-                }else if(fieldType.equals("LocalDate")){
-                    statemnt.setDate(i+1, Date.valueOf((LocalDate)foreignId));
-                }else if(fieldType.equals("LocalDateTime")){
-                    statemnt.setTimestamp(i+1, Timestamp.valueOf((LocalDateTime)foreignId));
+                switch (fieldType) {
+                    case "Integer" -> statemnt.setInt(i + 1, (int) foreignId);
+                    case "String" -> statemnt.setString(i + 1, foreignId.toString());
+                    case "Double" -> statemnt.setDouble(i + 1, (double) foreignId);
+                    case "LocalDate" -> statemnt.setDate(i + 1, Date.valueOf((LocalDate) foreignId));
+                    case "LocalDateTime" -> statemnt.setTimestamp(i + 1, Timestamp.valueOf((LocalDateTime) foreignId));
                 }
                 primary.setAccessible(false);
                 continue;
@@ -399,12 +400,12 @@ public class QueryUtils {
             String fieldType=type.getSimpleName();
             String fieldName=f.getName();
             if(fieldType.equals("Integer")){
-                Integer val=Integer.valueOf(result.getInt(entry.getValue()));
+                Integer val= result.getInt(entry.getValue());
                 c.getMethod("set"+StringUtils.majStart(fieldName), f.getType()).invoke(obj, val);
             }else if(fieldType.equals("String")){
                 f.set(obj, result.getString(entry.getValue()));
             }else if(fieldType.equals("Double")){
-                Double val=Double.valueOf(result.getDouble(entry.getValue()));
+                Double val= result.getDouble(entry.getValue());
                 c.getMethod("set"+StringUtils.majStart(fieldName), f.getType()).invoke(obj, val);
             }else if(fieldType.equals("LocalDate")){
                 f.set(obj, result.getDate(entry.getValue()).toLocalDate());
