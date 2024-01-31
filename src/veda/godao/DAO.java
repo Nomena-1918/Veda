@@ -239,13 +239,14 @@ public class DAO {
             }
             opened=true;
         }
-        PreparedStatement statemnt=connect.prepareStatement(QueryUtils.getUpdateQuery(c, change, where));
+        String query=QueryUtils.getUpdateQuery(c, change, where);
+        PreparedStatement statemnt=connect.prepareStatement(query);
         Field[] changeFields=QueryUtils.getNotNullColumns(change);
         Field[] whereFields=QueryUtils.getNotNullColumns(where);
         int offset=0;
         Object[] mapping=QueryUtils.mapStatement(statemnt, changeFields, change, offset);
         statemnt=(PreparedStatement)mapping[0];
-        offset=(int)mapping[1];
+        offset=(int)mapping[1]+1;
         mapping=QueryUtils.mapStatement(statemnt, whereFields, where, offset);
         statemnt=(PreparedStatement)mapping[0];
         try{

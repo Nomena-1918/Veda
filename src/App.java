@@ -41,7 +41,7 @@ public class App {
         public void setId(Integer id) {
             this.id = id;
         }
-        @Column("nom")
+        @Column("label")
         String nom;
         // @Column("age")
         // Double age;
@@ -69,11 +69,15 @@ public class App {
         
     }
     public static void main(String[] args) throws Exception {
-        DAO dao=new DAO("poketra", "localhost", "5432", "eriq", "root", false, 2);
-        Look[] objects=dao.select(null, Look.class);
-        for(Look l:objects){
-            System.out.println(l.getNom());
-        }
+        Emp where=new Emp();
+        where.setId(2);
+        Dept dept=new Dept();
+        dept.setIddept(2);
+        Emp e=new Emp();
+        e.nom="Ferry";
+        e.setDept(dept);
+        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        dao.update(null, e, where);
     }
     @Test
     public void insertEmp() throws Exception{
@@ -82,8 +86,20 @@ public class App {
         Emp e=new Emp();
         e.nom="Ferry";
         e.setDept(dept);
-        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
         dao.insertWithoutPrimaryKey(null, e);
+    }
+    @Test
+    public void updateEmp() throws Exception{
+        Emp where=new Emp();
+        where.setId(2);
+        Dept dept=new Dept();
+        dept.setIddept(2);
+        Emp e=new Emp();
+        e.nom="Ferry2";
+        e.setDept(dept);
+        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        dao.update(null, e, where);
     }
     @Test
     public void insertDept() throws Exception{
