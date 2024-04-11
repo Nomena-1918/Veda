@@ -1,4 +1,4 @@
-package veda;
+package veda.godao.entity;
 
 import java.util.HashMap;
 

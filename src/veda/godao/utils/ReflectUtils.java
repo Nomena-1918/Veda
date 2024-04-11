@@ -12,7 +12,6 @@ public class ReflectUtils {
         Method selectWhere=DAO.class.getMethod("select", Connection.class, Class.class, Object.class);
         Method update=DAO.class.getMethod("update", Connection.class, Object.class, Object.class);
         Method delete=DAO.class.getMethod("delete", Connection.class, Object.class);
-        Method[] methods={insert, select, selectWhere, update, delete};
-        return methods;
+        return new Method[]{insert, select, selectWhere, update, delete};
     }
 }

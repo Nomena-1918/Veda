@@ -2,8 +2,9 @@ import java.sql.Connection;
 import java.util.HashMap;
 import org.junit.Test;
 
-import veda.EntityTable;
+import veda.godao.entity.EntityTable;
 import veda.godao.DAO;
+import veda.godao.DAOInterface;
 import veda.godao.Look;
 import veda.godao.annotations.Column;
 import veda.godao.annotations.ForeignKey;
@@ -137,8 +138,8 @@ public class App {
         Emp e=new Emp();
         e.nom="Ferry";
         e.setDept(dept);
-        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
-        dao.insertWithoutPrimaryKey(null, e);
+        DAOInterface daoInterface =new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        daoInterface.insertWithoutPrimaryKey(null, e);
     }
     @Test
     public void updateEmp() throws Exception{
@@ -149,32 +150,32 @@ public class App {
         Emp e=new Emp();
         e.nom="Ferry2";
         e.setDept(dept);
-        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
-        dao.update(null, e, where);
+        DAOInterface daoInterface =new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        daoInterface.update(null, e, where);
     }
     @Test
     public void insertDept() throws Exception{
         Dept dept=new Dept();
         dept.setNom("Finances");
-        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
-        dao.insertWithoutPrimaryKey(null, dept);
+        DAOInterface daoInterface =new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        daoInterface.insertWithoutPrimaryKey(null, dept);
     }
     @Test
     public void selectEmps() throws Exception{
-        DAO dao=new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
-        Emp[] emps=dao.select(null, Emp.class);
+        DAOInterface daoInterface =new DAO("vedatest", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        Emp[] emps= daoInterface.select(null, Emp.class);
         for(Emp e:emps){
             System.out.println(e.getNom()+" "+e.getDept());
         }
     }
     @Test
     public void updateLook() throws Exception{
-        DAO dao=new DAO("poketra", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        DAOInterface daoInterface =new DAO("poketra", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
         Look change=new Look();
         change.setId(1);
         change.setNom("debraille");
         Look where=new Look();
         where.setId(1);
-        dao.update(null, change, where);
+        daoInterface.update(null, change, where);
     }
 }
