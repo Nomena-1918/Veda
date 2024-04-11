@@ -1,5 +1,8 @@
+import java.sql.Connection;
+import java.util.HashMap;
 import org.junit.Test;
 
+import veda.EntityTable;
 import veda.godao.DAO;
 import veda.godao.Look;
 import veda.godao.annotations.Column;
@@ -7,6 +10,7 @@ import veda.godao.annotations.ForeignKey;
 import veda.godao.annotations.PrimaryKey;
 import veda.godao.annotations.Table;
 import veda.godao.utils.Constantes;
+import veda.godao.utils.DAOConnexion;
 
 public class App {
     @Table("dept")
@@ -14,7 +18,7 @@ public class App {
         @PrimaryKey
         @Column("id")
         Integer iddept;
-        @Column("nom")
+        @Column("label")
         String nom;
         public Integer getIddept() {
             return iddept;
@@ -33,7 +37,7 @@ public class App {
     @Table("emp")
     public static class Emp{
         @PrimaryKey
-        @Column("id")
+        @Column("idemp")
         Integer id;
         public Integer getId() {
             return id;
@@ -46,7 +50,7 @@ public class App {
         // @Column("age")
         // Double age;
         @ForeignKey(recursive = false)
-        @Column("iddept")
+        @Column("iddeptemp")
         Dept dept;
         public Dept getDept() {
             return dept;
@@ -66,18 +70,65 @@ public class App {
         // public void setAge(Double age) {
         //     this.age = age;
         // }
+    }
+    @Table("film")
+    public static class Film{
+        @PrimaryKey
+        @Column("id")
+        private Integer id;
+        @Column("nom")
+        private String nom;
+        @Column("duree")
+        private Double duree;
+        public Integer getId() {
+            return id;
+        }
+        public void setId(Integer id) {
+            this.id = id;
+        }
+        public String getNom() {
+            return nom;
+        }
+        public void setNom(String nom) {
+            this.nom = nom;
+        }
+        public Double getDuree() {
+            return duree;
+        }
+        public void setDuree(Double duree) {
+            this.duree = duree;
+        }
         
     }
     public static void main(String[] args) throws Exception {
-        Emp where=new Emp();
-        where.setId(2);
-        Dept dept=new Dept();
-        dept.setIddept(2);
-        Emp e=new Emp();
-        e.nom="Ferry";
-        e.setDept(dept);
-        DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
-        dao.update(null, e, where);
+        // Emp where=new Emp();
+        // where.setId(1);
+        // Dept dept=new Dept();
+        // dept.setIddept(1);
+        // Emp e=new Emp();
+        // e.nom="Ferry";
+        // e.setDept(dept);
+        // DAO dao=new DAO("scott", "localhost", "5432", "eriq", "root", false, Constantes.PSQL_ID);
+        // dao.update(null, e, where);
+        // Dept dept1=new Dept();
+        // Dept dept2=new Dept();
+        // System.out.println(dept1);
+        // System.out.println(dept2);
+        DAO dao=new DAO("org.postgresql.Driver", "postgresql", "cinepax", "localhost", "5432", "eriq", "root", false, true, 2);
+        try(Connection connect=DAOConnexion.getConnexion(dao)){
+            EntityTable table=new EntityTable();
+            table.setNom("projection_donnee");
+            table.setColonnes(new HashMap<>(){{
+                put("id", "serial primary key");
+                put("numseance", "int not null");
+                put("film", "varchar not null");
+                put("categorie", "varchar not null");
+                put("salle", "varchar not null");
+                put("date", "date not null");
+                put("heure", "timestamp not null");
+            }});
+            dao.createTable(connect, table, true);
+        }
     }
     @Test
     public void insertEmp() throws Exception{

@@ -2,6 +2,7 @@ package veda.godao.utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import veda.EntityTable;
 import veda.godao.DAO;
 import veda.godao.annotations.Column;
 import veda.godao.annotations.ForeignKey;
@@ -97,8 +99,7 @@ public class QueryUtils {
         LinkedList<Field> liste=new LinkedList<>();
         for(Field f:fields){
             Annotation annote=f.getAnnotation(Column.class);
-            Annotation primary=f.getAnnotation(PrimaryKey.class);
-            if(annote!=null&&primary==null){
+            if(annote!=null){
                 liste.add(f);
             }
         }
@@ -212,6 +213,12 @@ public class QueryUtils {
         Annotation annote=c.getAnnotation(Table.class);
         String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
         String query="select * from "+table;
+        return query;
+    }
+    public static String getSelectQuery(Class c, int limit, int offset) throws Exception{
+        Annotation annote=c.getAnnotation(Table.class);
+        String table=annote.annotationType().getMethod(Constantes.TABLE_VALUE).invoke(annote).toString();
+        String query="select * from "+table+" limit "+limit+" offset "+offset;
         return query;
     }
     public static String getSelectQuery(Class c, Object where) throws Exception{
@@ -342,6 +349,7 @@ public class QueryUtils {
                     statemnt.setTimestamp(i+1, Timestamp.valueOf((LocalDateTime)foreignId));
                 }
                 primary.setAccessible(false);
+                upOffset++;
                 continue;
             }
             String fieldType=type.getSimpleName();
@@ -414,5 +422,24 @@ public class QueryUtils {
             f.setAccessible(false);
         }
         return obj;
+    }
+    public static String getCountQuery(Class<?> c) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+        String query="select count(*) from %s";
+        Annotation annote=c.getAnnotation(Table.class);
+        String tableName=annote.annotationType().getMethod("value").invoke(annote).toString();
+        query=String.format(query, tableName);
+        return query;
+    }
+    public static String getCreateTableQuery(EntityTable table, boolean temporary){
+        String query="create ";
+        if(temporary){
+            query+="temporary ";
+        }
+        query+="table "+table.getNom()+"(";
+        for(Map.Entry<String, String> e:table.getColonnes().entrySet()){
+            query+=e.getKey()+" "+e.getValue()+", ";
+        }
+        query=query.substring(0, query.length()-2)+")";
+        return query;
     }
 }
