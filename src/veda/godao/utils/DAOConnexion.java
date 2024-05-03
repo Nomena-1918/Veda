@@ -34,4 +34,18 @@ public class DAOConnexion {
         conn.setAutoCommit(false);
         return conn;
     }
+    public static Connection getConnexionUTF8(DAO dao) throws Exception{
+        Class.forName(dao.getDriver());
+        String url=String.format("jdbc:%s://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8&user=%s&password=%s&useSSL=%s&allowPublicKeyRetrieval=%s", dao.getServer(), dao.getHost(), dao.getPort(), dao.getDatabase(), dao.getUser(), dao.getPwd(), dao.isUseSSL(), dao.isAllowKeyRetrieval());
+        Connection conn=DriverManager.getConnection(url);
+        conn.setAutoCommit(false);
+        return conn;
+    }
+    public static Connection getConnexionWIN1252(DAO dao) throws Exception{
+        Class.forName(dao.getDriver());
+        String url=String.format("jdbc:%s://%s:%s/%s?charSet=windows-1252&user=%s&password=%s&useSSL=%s&allowPublicKeyRetrieval=%s", dao.getServer(), dao.getHost(), dao.getPort(), dao.getDatabase(), dao.getUser(), dao.getPwd(), dao.isUseSSL(), dao.isAllowKeyRetrieval());
+        Connection conn=DriverManager.getConnection(url);
+        conn.setAutoCommit(false);
+        return conn;
+    }
 }

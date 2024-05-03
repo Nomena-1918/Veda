@@ -114,20 +114,10 @@ public class App {
         // Dept dept2=new Dept();
         // System.out.println(dept1);
         // System.out.println(dept2);
-        DAO dao=new DAO("org.postgresql.Driver", "postgresql", "cinepax", "localhost", "5432", "eriq", "root", false, true, 2);
+        DAO dao=new DAO("com.mysql.jdbc.Driver", "mysql", "multilingue", "localhost", "3306", "eriq", "root", false, true, 2);
         try(Connection connect=DAOConnexion.getConnexion(dao)){
-            EntityTable table=new EntityTable();
-            table.setNom("projection_donnee");
-            table.setColonnes(new HashMap<>(){{
-                put("id", "serial primary key");
-                put("numseance", "int not null");
-                put("film", "varchar not null");
-                put("categorie", "varchar not null");
-                put("salle", "varchar not null");
-                put("date", "date not null");
-                put("heure", "timestamp not null");
-            }});
-            dao.createTable(connect, table, true);
+            // EntityTable table=new EntityTable();0
+            HashMap<String, Object> contenu=dao.select(connect, String.format("select contenu_%s as contenu from contenu where idpage=%s", "de", "2"))[0];
         }
     }
     @Test
